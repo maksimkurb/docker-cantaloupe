@@ -150,7 +150,8 @@ COPY "configs/cantaloupe.properties.default-${cantaloupe.version}" /etc/cantalou
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe && \
     touch "$CONFIG_FILE" && \
     chown -R cantaloupe -L /var/log/cantaloupe /var/cache/cantaloupe "$CONFIG_FILE" \
-      /usr/local/bin/docker-entrypoint.sh /usr/local/cantaloupe
+      /usr/local/bin/docker-entrypoint.sh /usr/local/cantaloupe && \
+	  chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set up logging, keeping a separate log for just the errors (in addition to the full log)
 ENV CANTALOUPE_LOG_APPLICATION_ROLLINGFILEAPPENDER_PATHNAME=/var/log/cantaloupe/application.log
@@ -159,5 +160,5 @@ ENV CANTALOUPE_LOG_ERROR_ROLLINGFILEAPPENDER_PATHNAME=/var/log/cantaloupe/error.
 # Wrap things up with the entrypoint and command that the container runs
 USER cantaloupe
 WORKDIR /home/cantaloupe
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD [ "sh", "-c", "exec java -Dcantaloupe.config=$CONFIG_FILE -Xmx$HEAP_SIZE -jar /usr/local/cantaloupe/cantaloupe-*.*ar" ]
